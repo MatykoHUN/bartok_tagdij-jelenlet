@@ -1,6 +1,6 @@
 //Render the page with the given parameters
-module.exports = (objRepo) => {
+module.exports = (objRepo, view) => {
     return (req, res, next) => {
-        return next();
+        res.render(view,res.locals);
     }
 }

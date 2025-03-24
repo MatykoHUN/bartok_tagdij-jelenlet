@@ -10,12 +10,12 @@ const saveMembershipMW = require('../middlewares/saveMembershipMW');
 function subscribeToRoutes(app) {
     const objRepo = {};
 
-    app.get('/', loadMembershipMW(objRepo), renderMW(objRepo));
-    app.get('/login', loginMW(objRepo));
-    app.get('/logout', logoutMW(objRepo));
-    app.get('/attendance/view/:id', loadAttendanceMW(objRepo), renderMW(objRepo));
-    app.get('/attendance/comment/:id', loadAttendanceMW(objRepo), saveAttendanceMW(objRepo), renderMW(objRepo));
-    app.get('/membership/pay/:id', loadMembershipMW(objRepo), saveMembershipMW(objRepo), renderMW(objRepo));
+    app.get('/', loadMembershipMW(objRepo), renderMW(objRepo, 'tagdij.ejs'));
+    app.get('/login', loginMW(objRepo), renderMW(objRepo, 'index.ejs'));
+    app.get('/logout', logoutMW(objRepo), renderMW(objRepo, 'index.ejs'));
+    app.get('/attendance/view/:id', loadAttendanceMW(objRepo), renderMW(objRepo,'jelenlet.ejs'));
+    app.get('/attendance/comment/:id', loadAttendanceMW(objRepo), saveAttendanceMW(objRepo), renderMW(objRepo, 'jelenlet.ejs'));
+    app.get('/membership/pay/:id', loadMembershipMW(objRepo), saveMembershipMW(objRepo), renderMW(objRepo, 'tagdij.ejs'));
 
 }
 
