@@ -1,8 +1,12 @@
-var express = require('express');
-var app = express();
+const express = require('express');
+const app = express();
+
+const subscribeToRoutes = require('./routing/index');
 
 app.use(express.static('static'));
+subscribeToRoutes(app);
 
-var server = app.listen(3000, function () {
-    console.log("On :3000");
+
+app.listen(3000, () => {
+    console.log('Server is running on port 3000');
 });
