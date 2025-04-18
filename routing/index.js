@@ -5,12 +5,15 @@ const logoutMW = require('../middlewares/logoutMW');
 const renderMW = require('../middlewares/renderMW');
 const saveAttendanceMW = require('../middlewares/saveAttendanceMW');
 const saveMembershipMW = require('../middlewares/saveMembershipMW');
+const loadAdmin = require('../middlewares/loadAdmin');
+const renderAdmin = require('../middlewares/renderAdmin');
 
 
 function subscribeToRoutes(app) {
     const objRepo = {};
 
     app.get('/', loadMembershipMW(objRepo), renderMW(objRepo, 'tagdij.ejs'));
+    app.get('/admin', loadAdmin(objRepo), renderAdmin(objRepo, 'admin.ejs'));
     app.get('/login', loginMW(objRepo), renderMW(objRepo, 'index.ejs'));
     app.get('/logout', logoutMW(objRepo), renderMW(objRepo, 'index.ejs'));
     app.get('/attendance/view/:id', loadAttendanceMW(objRepo), renderMW(objRepo,'jelenlet.ejs'));
