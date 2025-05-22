@@ -4,7 +4,7 @@ var ejs = require('ejs');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 
-app.use(express.urlencoded({ extended: true })); // hogy működjön a req.body
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); 
 
 
