@@ -1,0 +1,124 @@
+﻿<%- include('header') %>
+
+      <nav class="navbar navbar-expand-lg custom-bg">
+        <div class="container-fluid">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white fw-bold border-bottom border-white " style="font-size:20px"  href="/admin">ADMIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/groups" style="font-size:20px" >CSOPORTOK</a>
+                </li>
+            </ul>
+            <div class="d-flex flex-column align-items-end">
+                <span class="bi bi-person text-white mb-1"> Admin</span>
+                <a href="/logout" class="text-white text-decoration-none border-bottom border-white"><i>Kijelentkezes</i></a>
+            </div>
+        </div>
+    </nav>
+    <style>
+    #addUserForm {
+        display: none;
+    }
+.table-responsive {
+    overflow-x: auto;
+    overflow-y: visible;
+    max-height: none;
+}
+
+
+   table {
+    width: 100%;
+    table-layout: auto ;
+}
+
+    td[contenteditable="true"] {
+        background-color: #2d336b;
+    }
+    .edit-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+     body {
+            background-color: #f5f5f5;
+        }
+        .custom-bg {
+            background-color: #2d336b !important;
+        }
+        .title {
+            font-size: 2.5rem;
+            color: #343a40;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+</style>
+
+
+<div class="container mt-4">
+    <h2>Felhasználó szerkesztése</h2>
+
+    <form method="POST" action="/admin/edit/<%= user._id %>">
+        <div class="row mb-3">
+            <div class="col"><input class="form-control" placeholder="Név" name="name" value="<%= user.name %>"></div>
+            <div class="col"><input class="form-control" placeholder="Email" name="email" type="email" value="<%= user.email %>"></div>
+            <div class="col"><input class="form-control" placeholder="Telefon" name="phone" type="tel" value="<%= user.phone %>"></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col"><input class="form-control" placeholder="Születési dátum" type="date" name="dob" value="<%= user.dateofbirth ? user.dateofbirth.toISOString().split('T')[0] : '' %>"></div>
+            <div class="col"><input class="form-control" placeholder="Szülő neve" name="parentName" value="<%= user.parentName || '' %>"></div>
+            <div class="col"><input class="form-control" placeholder="Szülő email" name="parentEmail" type="email" value="<%= user.parentEmail || '' %>"></div>
+            <div class="col"><input class="form-control" placeholder="Szülő telefon" name="parentPhone" type="tel" value="<%= user.parentPhone || '' %>"></div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+
+
+
+
+                <label class="form-label">Csoport(ok)</label>
+                    <select class="form-select" name="groups" multiple>
+                      <% groups.forEach(group => { %>
+                        <option value="<%= group._id %>"
+                          <%= user.groups && user.groups.some(g => g._id.toString() === group._id.toString()) ? 'selected' : '' %>>
+                          <%= group.name %>
+                        </option>
+                      <% }) %>
+                    </select>
+
+
+
+
+            </div>
+            <div class="col d-flex align-items-center">
+                <label class="form-check-label me-2">Vezető?</label>
+                <input type="checkbox" class="form-check-input" name="isLeader" <%= user.isLeader ? 'checked' : '' %>>
+            </div>
+            <div class="col">
+
+
+
+
+                <label class="form-label">Vezetői csoport(ok)</label>
+                    <select class="form-select" name="leaderGroups" multiple>
+                      <% groups.forEach(group => { %>
+                        <option value="<%= group._id %>"
+                          <%= user.leaderInGroups && user.leaderInGroups.some(g => g._id.toString() === group._id.toString()) ? 'selected' : '' %>>
+                          <%= group.name %>
+                        </option>
+                      <% }) %>
+                    </select>
+
+            </div>
+            <div class="col d-flex align-items-center">
+                <label class="form-check-label me-2">Admin?</label>
+                <input type="checkbox" class="form-check-input" name="isAdmin" <%= user.isAdmin ? 'checked' : '' %>>
+            </div>
+        </div>
+        <button class="btn btn-success" type="submit">Mentés</button>
+        <a href="/admin" class="btn btn-secondary ms-2">Vissza</a>
+    </form>
+</div>
+
+<%- include('footer') %>

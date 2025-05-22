@@ -1,89 +1,174 @@
-<!DOCTYPE html>
-<html lang="hu">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" href="https://bartokdance.hu/wp-content/uploads/2025/02/unnamed.png" type="image/x-icon">
-    <title>Admin fel¸let</title>
-    <style>
-        .custom-bg {
-            background-color: #2d336b;
-        }
+Ôªø <%- include ('header') %>
 
-        .custom-font-color {
-            color: #2d336b;
-        }
-    </style>
-</head>
-<body style="background-color: #f5f5f5">
-<nav class="navbar navbar-expand-lg custom-bg">
-    <div class="container-fluid">
-        <ul class="navbar-nav me-auto"></ul>
-        <div class="me-auto">
-            <p class="text-white text-decoration-none" style="font-size:24px; margin-bottom: 2px">ADMIN FEL‹LET</p>
+      <nav class="navbar navbar-expand-lg custom-bg">
+        <div class="container-fluid">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white fw-bold border-bottom border-white " style="font-size:20px"  href="/admin">ADMIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/groups" style="font-size:20px" >CSOPORTOK</a>
+                </li>
+            </ul>
+            <div class="d-flex flex-column align-items-end">
+                <span class="bi bi-person text-white mb-1"> Admin</span>
+                <a href="/logout" class="text-white text-decoration-none border-bottom border-white"><i>Kijelentkezes</i></a>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<div class="container mt-5">
-    <h3 class="text-center custom-font-color">Csoportok sz˚rÈse</h3>
-    <div class="mb-4">
-        <label for="groupSelect" class="form-label">V·lassz csoportot:</label>
-        <select id="groupSelect" class="form-select">
-            <option selected disabled>V·lassz...</option>
-            <!-- Ide jˆnnek a csoportok dinamikusan -->
-        </select>
+<% function getAge(dob) {
+    if (!dob) return '-';
+    const diff = Date.now() - new Date(dob).getTime();
+    return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+} %>
+
+<style>
+    #addUserForm {
+        display: none;
+    }
+.table-responsive {
+    overflow-x: auto;
+    overflow-y: visible;
+    max-height: none;
+}
+
+
+   table {
+    width: 100%;
+    table-layout: auto ;
+}
+
+    td[contenteditable="true"] {
+        background-color: #2d336b;
+    }
+    .edit-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+     body {
+            background-color: #f5f5f5;
+        }
+        .custom-bg {
+            background-color: #2d336b !important;
+        }
+        .title {
+            font-size: 2.5rem;
+            color: #343a40;
+        }
+        .subtitle {
+            font-size: 1.5rem;
+            color: #6c757d;
+        }
+</style>
+
+<div class="container mt-4" >
+    <h2 class="mb-4">Felhaszn√°l√≥k list√°ja</h2>
+
+    <button class="btn btn-primary mb-3" onclick="toggleAddForm()">√öj felhaszn√°l√≥ hozz√°ad√°sa</button>
+
+    <div id="addUserForm" class="card p-3 mb-4">
+        <form id="newUserForm" method="POST" action="/admin/new">
+            <div class="row mb-3">
+                <div class="col"><input class="form-control" placeholder="N√©v" name="name"></div>
+                <div class="col"><input class="form-control" placeholder="Email" name="email" type="email"></div>
+                <div class="col"><input class="form-control" placeholder="Telefon" name="phone" type="tel"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col"><input class="form-control" placeholder="Sz√ºlet√©si d√°tum" type="date" name="dob"></div>
+                <div class="col"><input class="form-control" placeholder="Sz√ºl≈ë neve" name="parentName"></div>
+                <div class="col"><input class="form-control" placeholder="Sz√ºl≈ë email" name="parentEmail" type="email"></div>
+                <div class="col"><input class="form-control" placeholder="Sz√ºl≈ë telefon" name="parentPhone" type="tel"></div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="groups" class="form-label">Csoport(ok)</label>
+                    <select class="form-select" name="groups[]" id="groups" multiple>
+                        <% groups.forEach(group => { %>
+                            <option value="<%= group._id %>"><%= group.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="col d-flex align-items-center">
+                    <label class="form-check-label me-2">Vezet≈ë?</label>
+                    <input type="checkbox" class="form-check-input" name="isLeader" onchange="toggleLeaderGroups(this)">
+                </div>
+                <div class="col">
+                    <label for="leaderGroups" class="form-label">Vezet≈ëi csoport(ok)</label>
+                    <select class="form-select" name="leaderGroups[]" id="leaderGroups" multiple disabled>
+                        <% groups.forEach(group => { %>
+                            <option value="<%= group._id %>"><%= group.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="col d-flex align-items-center">
+                    <label class="form-check-label me-2">Admin?</label>
+                    <input type="checkbox" class="form-check-input" name="isAdmin">
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit">Ment√©s</button>
+        </form>
     </div>
 
-    <div id="userList" class="table-responsive" style="display: none;">
-        <h4 class="custom-font-color">Felhaszn·lÛk</h4>
-        <table class="table table-striped">
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
                 <tr>
-                    <th>NÈv</th>
-                    <th>E-mail</th>
+                    <th>N√©v</th>
+                    <th>Email</th>
                     <th>Telefon</th>
-                    <th>M˚velet</th>
+                    <th>Sz√ºlet√©si d√°tum</th>
+                    <th>Sz√ºl≈ë neve</th>
+                    <th>Sz√ºl≈ë email</th>
+                    <th>Sz√ºl≈ë telefon</th>
+                    <th>Csoport(ok)</th>
+                    <th>√âletkor</th>
+                    <th>Vezet≈ë?</th>
+                    <th>Vezet≈ëi csoport(ok)</th>
+                    <th>Admin?</th>
+                    <th>M≈±velet</th>
                 </tr>
             </thead>
-            <tbody id="userTableBody">
-                <!-- Ide ker¸lnek a felhaszn·lÛk -->
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td contenteditable="false"><%= user.name %></td>
+                        <td contenteditable="false"><%= user.email %></td>
+                        <td contenteditable="false"><%= user.phone %></td>
+                        <td contenteditable="false"><%= user.dateofbirth ? user.dateofbirth.toISOString().split('T')[0] : '' %></td>
+                        <td contenteditable="false"><%= user.parentName || '-' %></td>
+                        <td contenteditable="false"><%= user.parentEmail || '-' %></td>
+                        <td contenteditable="false"><%= user.parentPhone || '-' %></td>
+                        <td contenteditable="false">
+                             <%= user.groups.map(group => group.name).join(", ") %>
+                        </td>                     
+                        <td><%= getAge(user.dateofbirth) %></td>
+                        <td><input type="checkbox" disabled <%= user.isLeader ? 'checked' : '' %>></td>
+                            <td contenteditable="false">
+                          <%= user.leaderInGroups.map(group => group.name).join(", ") %>
+                        </td>
+
+                        <td><input type="checkbox" disabled <%= user.isAdmin ? 'checked' : '' %>></td>
+                        <td class="edit-buttons">
+    <a href="/admin/edit/<%= user._id %>" class="btn btn-sm btn-warning">Szerkeszt√©s</a>
+    <a href="/admin/delete/<%= user._id %>" class="btn btn-sm btn-danger" onclick="return confirm('Biztosan t√∂r√∂lni szeretn√©d ezt a felhaszn√°l√≥t?')">T√∂rl√©s</a>
+</td>
+                    </tr>
+                <% }) %>
             </tbody>
         </table>
     </div>
-
-    <div id="editUserForm" style="display: none;">
-        <h4 class="custom-font-color">Felhaszn·lÛ szerkesztÈse</h4>
-        <form>
-            <div class="mb-3">
-                <label class="form-label">NÈv:</label>
-                <input type="text" class="form-control" id="editName">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">E-mail:</label>
-                <input type="email" class="form-control" id="editEmail">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Telefon:</label>
-                <input type="text" class="form-control" id="editPhone">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Sz¸letÈsi d·tum:</label>
-                <input type="date" class="form-control" id="editDOB">
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Csoport(ok):</label>
-                <select multiple class="form-select" id="editGroups">
-                    <!-- Dinamikusan betˆltˆtt csoportok -->
-                </select>
-            </div>
-            <button type="submit" class="btn btn-success">MentÈs</button>
-        </form>
-    </div>
 </div>
 
-<%- include ('footer') %>
-</body>
-</html>
+<script>
+    function toggleAddForm() {
+        const form = document.getElementById('addUserForm');
+        form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    }
+
+    function toggleLeaderGroups(checkbox) {
+        document.getElementById('leaderGroups').disabled = !checkbox.checked;
+    }
+</script>
+
+<%- include('footer') %>

@@ -1,15 +1,17 @@
-//Login the user
-module.exports = (objRepo) => {
+﻿module.exports = (objRepo) => {
     return (req, res, next) => {
-        req.session.counter = typeof req.session.counter === 'number' ? req.session.counter + 1 : 1;
         if (typeof req.body.password === 'undefined') {
             return next();
         }
-        if (req.body.password === 'admin') {
+
+        if (req.body.password === 'admin' && req.body.email === 'admin') {
             req.session.loggedIn = true;
-            return res.redirect('/');
+            return req.session.save(() => {
+                return res.redirect('/admin');
+            });
         }
 
-        return next();
+        return res.redirect('/login?error=1');
     }
 }
+

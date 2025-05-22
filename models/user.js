@@ -10,19 +10,17 @@ const User = db.model('User', {
     password: String, // Password of the user
     parentName: { // Name of the parent (only if the user is a minor)
         type: String,
-        default: 'N/A'
     },
     email: String,  // Email of the user
     parentEmail: { // Email of the parent (only if the user is a minor)
         type: String,
-        default: 'N/A'
     },
     phone: String,  // Phone number of the user
     parentPhone: { // Phone number of the parent (only if the user is a minor)
         type: String,
-        default: 'N/A'
     },
     dateofbirth: Date,  // Date of birth of the user
+    
     groups: [{ // Groups of the user (usually 1, but can be more)
         type: Schema.Types.ObjectId,
         ref: 'Group'
@@ -32,6 +30,7 @@ const User = db.model('User', {
         type: Boolean,
         default: false
     },
+    
     leaderInGroups: [{ // The group the user is a leader of (if any)
         type: Schema.Types.ObjectId,
         ref: 'Group',

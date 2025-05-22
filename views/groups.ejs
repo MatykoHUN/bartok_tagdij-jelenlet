@@ -1,0 +1,110 @@
+﻿<%- include('header') %>
+      <nav class="navbar navbar-expand-lg custom-bg">
+        <div class="container-fluid">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link text-white " style="font-size:20px"  href="/admin">ADMIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white  fw-bold  border-bottom border-white" href="" style="font-size:20px">CSOPORTOK</a>
+                </li>
+            </ul>
+            <div class="d-flex flex-column align-items-end">
+                <span class="bi bi-person text-white mb-1"> Admin</span>
+                <a href="/logout" class="text-white text-decoration-none border-bottom border-white"><i>Kijelentkezes</i></a>
+            </div>
+        </div>
+    </nav>
+<style>
+    #addGroupForm {
+        display: none;
+    }
+    .table-responsive {
+        max-height: 70vh;
+        overflow-y: auto;
+        overflow-x: auto;
+        border: 1px solid #dee2e6;
+    }
+    table {
+        min-width: 1000px;
+    }
+    td[contenteditable="true"] {
+        background-color: #2d336b;
+    }
+    .edit-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    body {
+        background-color: #f5f5f5;
+    }
+    .custom-bg {
+        background-color: #2d336b !important;
+    }
+    .title {
+        font-size: 2.5rem;
+        color: #343a40;
+    }
+    .subtitle {
+        font-size: 1.5rem;
+        color: #6c757d;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="mb-4">Csoportok listája</h2>
+
+    <button class="btn btn-primary mb-3" onclick="toggleAddForm()">Új csoport hozzáadása</button>
+
+    <div id="addGroupForm" class="card p-3 mb-4">
+        <form id="newGroupForm" method="POST" action="/groups/new">
+            <div class="row mb-3">
+                <div class="col">
+                    <input class="form-control" placeholder="Csoport neve" name="name" required>
+                </div>
+                <div class="col">
+                    <textarea class="form-control" placeholder="Leírás" name="description" rows="3"></textarea>
+                </div>
+                <div class="col d-flex align-items-center">
+                    <label class="form-check-label me-2">Aktív nyáron?</label>
+                    <input type="checkbox" class="form-check-input" name="summerActivity">
+                </div>
+            </div>
+            <button class="btn btn-success" type="submit">Mentés</button>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Név</th>
+                    <th>Leírás</th>
+                    <th>Aktív nyáron?</th>
+                    <th>Művelet</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% groups.forEach(group => { %>
+                    <tr>
+                        <td contenteditable="false"><%= group.name %></td>
+                        <td contenteditable="false"><%= group.description %></td>
+                        <td><input type="checkbox" disabled <%= group.summerActivity ? 'checked' : '' %>></td>
+                        <td class="edit-buttons">
+                            <a href="/groups/delete/<%= group._id %>" class="btn btn-sm btn-danger" onclick="return confirm('Biztosan törölni szeretnéd ezt a csoportot?')">Törlés</a>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function toggleAddForm() {
+        const form = document.getElementById('addGroupForm');
+        form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+    }
+</script>
+
+<%- include('footer') %>
